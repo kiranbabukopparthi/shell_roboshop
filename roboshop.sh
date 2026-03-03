@@ -34,22 +34,20 @@ aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
        IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
        --query 'Reservations[].Instances[].PublicIpAddress' \
-       --output text
+       --output text )
        
        echo "This is public IP"
        RECORD_NAME="$DOMAIN_NAME"
 
-       )
     else
       IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
        --query 'Reservations[].Instances[].PrivateIpAddress' \
-       --output text
+       --output text )
 
        echo "This is Private IP"
-        RECORD_NAME="$instance.$DOMAIN_NAME"
+       RECORD_NAME="$instance.$DOMAIN_NAME"
         
-        )
     fi
     
     echo "IP address is : $IP"
