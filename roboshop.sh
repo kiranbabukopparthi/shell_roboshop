@@ -11,7 +11,8 @@ AMI_ID="ami-0220d79f3f480ecf5"
 SG_ID="sg-0d35d61ce5afa8d7d"
 
 for instance in $@
-do #This is the script to create new instance and get that instance id
+do 
+    # Create new instance and get instance ID
     INSTANCE_ID=$(aws ec2 run-instances \
     --image-id $AMI_ID \
     --instance-type t3.micro \
@@ -19,19 +20,22 @@ do #This is the script to create new instance and get that instance id
     --tag-specifications "ResourceType=instance,Tags=[{Key=Name,Value=$instance}]" \
     --query 'Instances[0].InstanceId' \
     --output text)
+echo "Created instance is : $INSTANCE_ID"
 
-#This is to know the whether the Ip is public or private
+# Wait until instance is running
+aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
 
+    # Get IP address and check public or private
     if [ $instance == "frontend" ]; then
        IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
-       --query 'Reservations[].Instances[].PublicIpAddress]' \
+       --query 'Reservations[].Instances[].PublicIpAddress' \
        --output text
        )
     else
       IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
-       --query 'Reservations[].Instances[].PrivateIpAddress]' \
+       --query 'Reservations[].Instances[].PrivateIpAddress' \
        --output text
         )
     fi
