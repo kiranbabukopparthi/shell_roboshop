@@ -41,7 +41,7 @@ VALIDATE $? "Nodejs installation"
 #adding system user and here we are checking idempotency as well 
 #which means whether the script is giving same results or not while running it multiple times
 id roboshop&>>$LOG_FILE
-if [$? -ne 0 ]; then
+if [ $? -ne 0 ]; then
     useradd --system --home /app --shell /sbin/nologin --comment "roboshop system user" roboshop
     VALIDATE $? "creating system user"
 else
