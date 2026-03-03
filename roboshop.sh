@@ -25,16 +25,14 @@ do #This is the script to create new instance and get that instance id
     if [ $instance == "frontend" ]; then
        IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
-       --query 'Reservations[*].Instances[*].PublicIpAddress]' \
+       --query 'Reservations[].Instances[].PublicIpAddress]' \
        --output text
-    echo "This is Public IP"
        )
     else
       IP=$( aws ec2 describe-instances \
        --instance-ids $INSTANCE_ID \
-       --query 'Reservations[*].Instances[*].PrivateIpAddress]' \
+       --query 'Reservations[].Instances[].PrivateIpAddress]' \
        --output text
-    echo "This is Private IP"
         )
     fi
     
