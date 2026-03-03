@@ -37,6 +37,8 @@ do #This is the script to create new instance and get that instance id
     echo "This is Private IP"
         )
     fi
+    
+    echo "IP address is : $IP"
 done
 
 
