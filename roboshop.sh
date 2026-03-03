@@ -10,7 +10,9 @@
 AMI_ID="ami-0220d79f3f480ecf5"
 SG_ID="sg-0d35d61ce5afa8d7d"
 
-for instance in $@
+echo "enter the package names which you want to install"
+read -a PACKAGES
+for instance in ${PACKAGES[@]}
 do 
     # Create new instance and get instance ID
     INSTANCE_ID=$(aws ec2 run-instances \
