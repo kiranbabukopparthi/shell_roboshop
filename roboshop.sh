@@ -9,6 +9,8 @@
 
 AMI_ID="ami-0220d79f3f480ecf5"
 SG_ID="sg-0d35d61ce5afa8d7d"
+HOSTED_ZONE_ID="Z00304071NBVUU6KSVCUS"
+DOMAIN_NAME="kopparthiskiranbabu.space"
 
 echo "enter the package names which you want to install"
 read -a PACKAGES
@@ -35,6 +37,8 @@ aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
        --output text
        
        echo "This is public IP"
+       RECORD_NAME="$DOMAIN_NAME"
+
        )
     else
       IP=$( aws ec2 describe-instances \
@@ -43,12 +47,32 @@ aws ec2 wait instance-running --instance-ids "$INSTANCE_ID"
        --output text
 
        echo "This is Private IP"
+        RECORD_NAME="$instance.$DOMAIN_NAME"
+        
         )
     fi
     
     echo "IP address is : $IP"
+
+#updating DNS records in R53
+
+    aws route53 change-resource-record-sets \
+    --hosted-zone-id $HOSTED_ZONE_ID \
+    --change-batch '{
+        "Changes": [{
+        "Action": "UPSERT",
+        "ResourceRecordSet": {
+            "Name": "'"$RECORD_NAME"'",
+            "Type": "A",
+            "TTL": 1,
+            "ResourceRecords": [{ "Value": "'$IP'" }]
+        }
+        }]
+    }'
+    echo "Record data is updated for $instance in R53"
 done
 
 
-
+# here upsert is used to update the record andd if the record is already updated,
+# it will skip it
 
